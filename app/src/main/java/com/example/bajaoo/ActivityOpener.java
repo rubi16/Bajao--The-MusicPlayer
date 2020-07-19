@@ -33,6 +33,7 @@ public class ActivityOpener extends AppCompatActivity {
             }
         });
 
+
         myThread.start();
     }
 }
