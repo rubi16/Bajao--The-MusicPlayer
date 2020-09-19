@@ -21,7 +21,7 @@ public class ActivityOpener extends AppCompatActivity {
 
 
                 try {
-                    sleep(5000);
+                    sleep(2000);
                     Intent i = new Intent(ActivityOpener.this,MainActivity.class);
                     startActivity(i);
 

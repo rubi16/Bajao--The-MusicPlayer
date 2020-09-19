@@ -2,6 +2,7 @@ package com.example.bajaoo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -41,7 +42,7 @@ public class Playeractivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Now Playing");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         updateSeekbar= new Thread(){
             @Override
@@ -78,7 +79,7 @@ public class Playeractivity extends AppCompatActivity {
 
         sname= mySongs.get(positions).getName().toString();
 
-        String songNmae = i.getStringExtra("songname");
+        final String songNmae = i.getStringExtra("songname");
 
         songTextlabel.setText(songNmae);
         songTextlabel.setSelected(true);
@@ -91,6 +92,7 @@ public class Playeractivity extends AppCompatActivity {
 
         mymediaPlayer.start();
         songSeekBar.setMax(mymediaPlayer.getDuration());
+        startService(sname);
 
         updateSeekbar.start();
 
@@ -122,9 +124,11 @@ public class Playeractivity extends AppCompatActivity {
                 if (mymediaPlayer.isPlaying()) {
                     btn_pause.setBackgroundResource(R.drawable.icon_play);
                     mymediaPlayer.pause();
+                    stopService();
                 } else {
                     btn_pause.setBackgroundResource(R.drawable.icon_pause);
                     mymediaPlayer.start();
+                    startService(sname);
                 }
 
             }
@@ -145,6 +149,7 @@ public class Playeractivity extends AppCompatActivity {
                 songTextlabel.setText(sname);
 
                 mymediaPlayer.start();
+                startService(sname);
             }
         });
 
@@ -163,19 +168,26 @@ public class Playeractivity extends AppCompatActivity {
                 songTextlabel.setText(sname);
 
                 mymediaPlayer.start();
+                startService(sname);
 
             }
         });
 
 
+
+
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==android.R.id.home){
-            onBackPressed();
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void stopService() {
+        Intent serviceIntent = new Intent(this, ForeGroundService.class);
+        stopService(serviceIntent);
     }
+
+    private void startService(String songName) {
+        Intent serviceIntent = new Intent(this, ForeGroundService.class);
+        serviceIntent.putExtra("inputExtra", songName);
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+
 }
